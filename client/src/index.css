@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@import "./assets/fonts/stylesheet.css";
+
+@theme {
+  --font-sans: "Helvetica Now Display", Helvetica, "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+html, body, #root {
+  font-family: var(--font-sans);
+}
