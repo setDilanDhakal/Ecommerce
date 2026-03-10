@@ -52,9 +52,9 @@ export default function Navigation() {
   }
 
   return (
-    <div className="px-8 py-3">
+    <div className="px-4 sm:px-6 md:px-8 py-3">
       <div className="flex items-center justify-between">
-        <Link to="/" className="text-white text-2xl italic font-bold tracking-wide">NOMAD.</Link>
+        <Link to="/" className="text-white text-xl sm:text-2xl italic font-bold tracking-wide">NOMAD.</Link>
         <div className="hidden lg:flex items-center gap-6 text-white/90 text-sm">
           {menuItems.map((item) => (
             <Link
