@@ -20,7 +20,7 @@ function Hero() {
           </p>
           <p className="text-white italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl">RAW</p>
           <p
-            className="italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl "
+            className="italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl  hover:text-neon"
             style={{
               WebkitTextStroke: "clamp(0.3px, 0.15vw, 1.5px) white",
               letterSpacing: "clamp(1rem, 4vw, 3rem)",
