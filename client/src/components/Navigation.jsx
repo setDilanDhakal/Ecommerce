@@ -9,7 +9,7 @@ export default function Navigation() {
     { name: "Cart", href: "/" },
     { name: "About", href: "/" },
   ]
-  function GlassButton({ children }) {
+  function GlassButton({ children, to }) {
     const [hovered, setHovered] = useState(false)
     const [pressed, setPressed] = useState(false)
     const [pos, setPos] = useState({ x: 50, y: 50 })
@@ -19,9 +19,11 @@ export default function Navigation() {
       const y = ((e.clientY - r.top) / r.height) * 100
       setPos({ x, y })
     }
+    const Comp = to ? Link : "button"
     return (
-      <button
-        type="button"
+      <Comp
+        to={to}
+        type={to ? undefined : "button"}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => {
           setHovered(false)
@@ -47,7 +49,7 @@ export default function Navigation() {
           }}
         />
         <span className="relative">{children}</span>
-      </button>
+      </Comp>
     )
   }
 
@@ -65,7 +67,7 @@ export default function Navigation() {
               {item.name.toUpperCase()}
             </Link>
           ))}
-          <GlassButton>Get Started</GlassButton>
+          <GlassButton to="/login">Get Started</GlassButton>
         </div>
         <button
           type="button"
@@ -102,7 +104,7 @@ export default function Navigation() {
               </Link>
             ))}
             <div className="pt-2">
-              <GlassButton>Get Started</GlassButton>
+              <GlassButton to="/login">Get Started</GlassButton>
             </div>
           </nav>
         </div>
