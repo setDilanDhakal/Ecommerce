@@ -5,7 +5,7 @@ import { IoHeadset } from "react-icons/io5";
 function Banner() {
   return (
     <>
-      <div className="p-12">
+      <div className="px-4 sm:px-6 md:px-8 pt-12 pb-28 sm:pb-32">
         <p className="text-black/90 text-sm mb-2">
           <span className="text-neutral-700">Hot and fresh:</span> Like your
           morning coffee!
@@ -32,9 +32,9 @@ function Banner() {
 
         {/* SECTION for image banner  */}
 
-        <div className="flex flex-col lg:flex-row h-[60vh] sm:h-[70vh] lg:h-[80vh] my-10 gap-3">
+        <div className="flex flex-col lg:flex-row lg:h-[80vh] mt-10 mb-24 sm:mb-32 gap-3">
           <div className="flex-1">
-            <div className="group relative h-full overflow-hidden rounded-md">
+            <div className="group relative min-h-[40vh] sm:min-h-[50vh] md:min-h-[60vh] lg:min-h-[80vh] overflow-hidden rounded-md">
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1768666608335-bd22b63ddad3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
               <div className="absolute left-0 right-0 bottom-0 h-12 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                 <span className="text-white text-xs sm:text-sm">Winter Collection</span>
