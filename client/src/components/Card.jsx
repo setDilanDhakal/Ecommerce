@@ -38,7 +38,7 @@ function Card() {
   ];
 
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-5 mt-8">
+    <div className="px-4 sm:px-6 md:px-8 py-9 mt-8 mb-9">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Latest Collection</h1>
       <p className="text-sm text-neutral-500 mb-6 sm:mb-8">
         Discover our latest collection of trendy and stylish jackets.

@@ -1,18 +1,23 @@
 import Navigation from "../components/Navigation.jsx";
 import Slider from "../components/Slider.jsx";
-import Footer from '../components/Footer.jsx'
+import Footer from "../components/Footer.jsx";
 import Hero from "../components/Hero.jsx";
-import Card from '../components/Card.jsx'
+import Card from "../components/Card.jsx";
 import Slide from "../components/Slide.jsx";
+import Banner from "../components/Banner.jsx";
+
 function Home() {
   return (
-    <div className="">
+    <div>
       <Slider />
       <Hero />
       <Slide />
       <Card />
-      <Footer />
+      <Banner />
 
+
+
+      <Footer />
     </div>
   );
 }

@@ -4,10 +4,10 @@ import { Equal, X } from "lucide-react"
 export default function Navigation() {
   const [open, setOpen] = useState(false);
   const menuItems = [
-    { name: "Products", href: "/" },
-    { name: "Designs", href: "/" },
-    { name: "Cart", href: "/" },
-    { name: "About", href: "/" },
+    { name: "Products", href: "/product" },
+    { name: "Story", href: "/story" },
+    { name: "Cart", href: "/cart" },
+    { name: "About", href: "/about" },
   ]
   function GlassButton({ children, to }) {
     const [hovered, setHovered] = useState(false)

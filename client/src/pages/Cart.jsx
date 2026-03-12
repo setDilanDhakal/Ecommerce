@@ -1,4 +1,4 @@
-function Product (){
+function Cart(){
     return(
         <>
         
@@ -6,6 +6,4 @@ function Product (){
     )
 }
 
-
-
-export default Product
+export default Cart
