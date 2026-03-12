@@ -32,9 +32,9 @@ function Banner() {
 
         {/* SECTION for image banner  */}
 
-        <div className="flex h-[80vh] my-10 ">
+        <div className="flex flex-col lg:flex-row h-[60vh] sm:h-[70vh] lg:h-[80vh] my-10 gap-3">
           <div className="flex-1">
-            <div className="group relative h-full overflow-hidden ">
+            <div className="group relative h-full overflow-hidden rounded-md">
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1768666608335-bd22b63ddad3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
               <div className="absolute left-0 right-0 bottom-0 h-12 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                 <span className="text-white text-xs sm:text-sm">Winter Collection</span>
@@ -43,10 +43,10 @@ function Banner() {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col ">
-            <div className="flex flex-1 ">
+          <div className="flex-1 flex flex-col gap-2 mt-3 lg:mt-0">
+            <div className="flex flex-col sm:flex-row flex-1 gap-2">
               <div className="flex-1">
-                <div className="group relative h-full overflow-hidden ">
+                <div className="group relative h-full min-h-[28vh] sm:min-h-[30vh] lg:min-h-[39vh] overflow-hidden rounded-md">
                   <div className="absolute inset-0 bg-[url('https://i.pinimg.com/736x/7a/56/49/7a5649b6dea68012b2544668b665e125.jpg')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
                   <div className="absolute left-0 right-0 bottom-0 h-10 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                     <span className="text-white text-xs sm:text-sm">Minimal Looks</span>
@@ -55,7 +55,7 @@ function Banner() {
                 </div>
               </div>
               <div className="flex-1">
-                <div className="group relative h-full overflow-hidden ">
+                <div className="group relative h-full min-h-[28vh] sm:min-h-[30vh] lg:min-h-[39vh] overflow-hidden rounded-md">
                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577909687863-91bb3ec12db5?q=80&w=1173&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover  bg-center transition-transform duration-500 ease-out group-hover:scale-105 "></div>
                   <div className="absolute left-0 right-0 bottom-0 h-10 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                     <span className="text-white text-xs sm:text-sm">Streetwear Drop</span>
@@ -65,9 +65,9 @@ function Banner() {
               </div>
             </div>
 
-            <div className="flex flex-1 ">
+            <div className="flex flex-col sm:flex-row flex-1 gap-2">
               <div className="flex-1">
-                <div className="group relative h-full overflow-hidden ">
+                <div className="group relative h-full min-h-[28vh] sm:min-h-[30vh] lg:min-h-[39vh] overflow-hidden rounded-md">
                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587367336516-887f58881b13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
                   <div className="absolute left-0 right-0 bottom-0 h-10 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                     <span className="text-white text-xs sm:text-sm">Seasonal Essentials</span>
@@ -76,7 +76,7 @@ function Banner() {
                 </div>
               </div>
               <div className="flex-1">
-                <div className="group relative h-full overflow-hidden">
+                <div className="group relative h-full min-h-[28vh] sm:min-h-[30vh] lg:min-h-[39vh] overflow-hidden rounded-md">
                   <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1625204614387-6509254d5b02?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
                   <div className="absolute left-0 right-0 bottom-0 h-10 bg-black/80 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-between px-3">
                     <span className="text-white text-xs sm:text-sm">Crafted Layers</span>
