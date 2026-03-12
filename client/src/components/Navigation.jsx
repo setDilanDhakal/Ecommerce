@@ -1,8 +1,16 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Equal, X } from "lucide-react"
 export default function Navigation() {
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    document.body.classList.toggle("menu-open", open);
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.classList.remove("menu-open");
+      document.body.style.overflow = "";
+    };
+  }, [open]);
   const menuItems = [
     { name: "Products", href: "/product" },
     { name: "Story", href: "/story" },
@@ -80,11 +88,11 @@ export default function Navigation() {
 
       <div className={`lg:hidden fixed inset-0 z-50 ${open ? "pointer-events-auto" : "pointer-events-none"}`}>
         <div
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-white/10 backdrop-blur-md transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"} z-10`}
           onClick={() => setOpen(false)}
         />
         <div
-          className={`absolute right-0 top-0 h-full w-3/4 max-w-sm bg-white text-black p-6 flex flex-col transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute right-0 top-0 h-full w-3/4 max-w-sm bg-white text-black p-6 flex flex-col transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"} z-20 shadow-xl`}
         >
           <div className="flex items-center justify-between">
             <span className="font-bold">Menu</span>

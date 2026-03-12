@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 function Card() {
   const products = [
     {
@@ -37,8 +39,28 @@ function Card() {
     },
   ];
 
+  const rootRef = useRef(null);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const targets = root.querySelectorAll(".reveal");
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            e.target.classList.add("is-visible");
+            io.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.1 }
+    );
+    targets.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div className="px-4 sm:px-6 md:px-8 py-9 mt-8 mb-9">
+    <div ref={rootRef} className="px-4 sm:px-6 md:px-8 py-9 mt-8 mb-9">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Latest Collection</h1>
       <p className="text-sm text-neutral-500 mb-6 sm:mb-8">
         Discover our latest collection of trendy and stylish jackets.
@@ -48,7 +70,7 @@ function Card() {
         {products.map((product) => (
           <div
             key={product.id}
-            className="group w-full max-w-[19rem] sm:w-60 xl:w-56 2xl:w-60 bg-white rounded-sm shadow-md overflow-hidden transition-transform duration-300 ease-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]"
+            className="group reveal w-full max-w-[19rem] sm:w-60 xl:w-56 2xl:w-60 bg-white rounded-sm shadow-md overflow-hidden transition-transform duration-300 ease-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]"
           >
             <img
               src={product.image}

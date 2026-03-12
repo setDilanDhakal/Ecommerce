@@ -33,7 +33,7 @@ function Hero() {
             <button>
               <a
                 href=""
-                className="inline-block bg-white text-black py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105 hover:bg-neon "
+                className="hero-cta inline-block bg-white text-black py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105 hover:bg-neon "
               >
                 Shop Collection
               </a>
