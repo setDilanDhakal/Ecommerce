@@ -1,41 +1,30 @@
 function UserNav() {
   return (
-    <nav className="relative border-b h-16 flex items-center justify-between px-4 overflow-hidden bg-background/50 backdrop-blur-md">
-      <div className="min-h-full -z-10 w-full bg-transparent absolute top-0 left-0">
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, var(--muted) 1px, transparent 1px), linear-gradient(to bottom, var(--muted) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-            WebkitMaskImage:
-              "radial-gradient(ellipse 80% 80% at 0% 0%, #000 50%, transparent 90%)",
-            maskImage:
-              "radial-gradient(ellipse 80% 80% at 0% 0%, #000 50%, transparent 90%)",
-          }}
-        />
+    <nav className="px-9 relative border-b h-16 flex items-center justify-between px-4 overflow-hidden bg-black/90 backdrop-blur-md">
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute inset-0" />
       </div>
 
-      <div className="z-10 flex items-center gap-4">
-        <a href="/" className="text-xl font-bold tracking-tighter uppercase italic">
+      <div className="flex items-center gap-4">
+        <a
+          href="/"
+          className="text-2xl font-bold tracking-tighter uppercase italic text-neon"
+        >
           NOMAD.
         </a>
       </div>
 
-      <div className="z-10 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <div className="hidden sm:flex flex-col items-end">
-          <span className="text-xs text-foreground font-semibold uppercase">
-            Dilan
-          </span>
-          <span className="text-[0.6rem] text-muted-foreground uppercase opacity-70 tracking-widest">
+          <span className="text-xs font-semibold uppercase text-neon">Dilan</span>
+          <span className="text-[0.6rem] text-gray-500 uppercase text-neon opacity-70 tracking-widest">
             Active Now
           </span>
         </div>
-        <div className="size-10 border rounded-full overflow-hidden p-0.5 bg-background">
+
+        <div className="size-10 border rounded-full overflow-hidden p-0.5 bg-white">
           <img
-            src={
-              "https://m.media-amazon.com/images/I/31sDQI7yfDL._AC_UF894,1000_QL80_.jpg"
-            }
+            src="http://i.pinimg.com/736x/ca/8f/be/ca8fbe875330ac28429a3d69f0d489f7.jpg"
             alt="profile"
             className="size-full rounded-full object-cover"
           />

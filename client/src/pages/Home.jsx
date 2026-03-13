@@ -1,9 +1,9 @@
 import Slider from "../components/Slider.jsx";
-import Footer from "../components/Footer.jsx";
 import Hero from "../components/Hero.jsx";
 import Card from "../components/Card.jsx";
 import Slide from "../components/Slide.jsx";
 import Banner from "../components/Banner.jsx";
+import Testimonial from "../components/Testimonial.jsx";
 
 function Home() {
 
@@ -15,10 +15,7 @@ function Home() {
       <Slide />
       <Card />
       <Banner />
-
-
-
-      <Footer />
+      <Testimonial />
     </div>
   );
 }

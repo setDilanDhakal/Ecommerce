@@ -5,6 +5,7 @@ import Home from './pages/Home.jsx'
 import Product from './pages/Product.jsx'
 import Story from './pages/Story.jsx'
 import Cart from './pages/Cart.jsx'
+import Footer from './components/Footer.jsx'
 
 function App(){
   return(
@@ -18,6 +19,7 @@ function App(){
         <Route path="/product" element={<Product />} />
         <Route path="/story" element={<Story />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
       
     </>
