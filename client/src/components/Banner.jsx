@@ -52,7 +52,7 @@ function Banner() {
 
         {/* SECTION for image banner  */}
 
-        <div className="flex flex-col lg:flex-row lg:h-[80vh] mt-10   gap-3">
+        <div className="flex flex-col lg:flex-row lg:h-[80vh] mt-10  gap-3">
           <div className="flex-1">
             <div className="group reveal-scale relative min-h-[40vh] sm:min-h-[50vh] md:min-h-[60vh] lg:min-h-[80vh] overflow-hidden rounded-md">
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1768666608335-bd22b63ddad3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"></div>
