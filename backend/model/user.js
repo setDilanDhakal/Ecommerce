@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
         default: false
     },
     image:{
-        type: String
+        type: String,
+        required: [true, 'Password is Required']
     },
     mobileNo: {
         type: String,
