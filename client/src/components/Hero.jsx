@@ -4,7 +4,6 @@ function Hero() {
   return (
     <>
       <div className="relative bg-[url('https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center bg-no-repeat">
-
         <div className="absolute inset-x-0 top-0 h-24 md:h-40 bg-gradient-to-b from-black/90 to-transparent pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-24 md:h-40 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
 
@@ -18,7 +17,9 @@ function Hero() {
           >
             WINTER ARCHIEVE 2026
           </p>
-          <p className="text-white italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl">RAW</p>
+          <p className="text-white italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl">
+            RAW
+          </p>
           <p
             className="italic text-5xl sm:text-7xl md:text-8xl lg:text-9xl  hover:text-neon"
             style={{
@@ -33,7 +34,7 @@ function Hero() {
             <button>
               <a
                 href=""
-                className="hero-cta inline-block bg-white text-black py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105 hover:bg-neon "
+                className="hero-cta inline-block  bg-neon text-black py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105  hover:border-neon"
               >
                 Shop Collection
               </a>
@@ -41,14 +42,13 @@ function Hero() {
             <button>
               <a
                 href=""
-                className="inline-block border border-white text-white py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105  hover:border-neon"
+                className="hero-cta inline-block border border-neon text-neon py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105  hover:border-neon"
               >
                 LookBook
               </a>
             </button>
           </div>
         </div>
-
       </div>
     </>
   );

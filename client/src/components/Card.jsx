@@ -70,7 +70,7 @@ function Card() {
         {products.map((product) => (
           <div
             key={product.id}
-            className="group reveal w-full max-w-[19rem] sm:w-60 xl:w-56 2xl:w-60 bg-white rounded-sm shadow-md overflow-hidden transition-transform duration-300 ease-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]"
+            className="group reveal w-full sm:w-60 xl:w-56 2xl:w-60 bg-white rounded-sm shadow-md overflow-hidden transition-transform duration-300 ease-out hover:shadow-xl hover:-translate-y-1 hover:scale-[1.02]"
           >
             <img
               src={product.image}
