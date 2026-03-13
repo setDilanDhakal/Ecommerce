@@ -138,6 +138,7 @@ const Login = async (req, res) => {
     return res.status(200).send({
       message: "Logged in successfully",
       data: userObj,
+      token: token,
     });
   } catch (error) {
     console.log("Error from Login", error);
@@ -260,7 +261,6 @@ const deleteUser = async (req, res) => {
       message: "User deleted successfully",
       data: user,
     });
-
   } catch (error) {
     console.error("Error from deleteUser:", error);
     return res.status(500).json({
@@ -270,4 +270,39 @@ const deleteUser = async (req, res) => {
   }
 };
 
-export { Register, Login, getUser, updateUser,deleteUser };
+// [SECTION] Update Password
+const updatePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { password } = req.body || {};
+
+    if (!id) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    if (!password) {
+      return res.status(400).json({
+        message: "Password is required",
+      });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    await user.save();
+
+    return res.status(200).send({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error", error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+export { Register, Login, getUser, updateUser, deleteUser, updatePassword };
