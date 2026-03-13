@@ -1,11 +1,11 @@
-import Navigation from "../components/Navigation"
+import UserNav from "../components/UserNav";
 
-function Cart(){
-    return(
-        <>
-            <Navigation />
-        </>
-    )
+function Cart() {
+  return (
+    <>
+      <UserNav />
+    </>
+  );
 }
 
-export default Cart
+export default Cart;
