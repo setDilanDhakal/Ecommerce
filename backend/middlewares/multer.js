@@ -1,9 +1,12 @@
 import multer from "multer";
+import fs from "fs";
 import Path from "path";
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./nomad/users");
+    const dir = "./public/uploads/users";
+    try { fs.mkdirSync(dir, { recursive: true }); } catch {}
+    cb(null, dir);
   },
   filename: function (req, file, cb) {
     const uniqueName = Date.now() + Path.extname(file.originalname);

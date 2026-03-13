@@ -2,26 +2,24 @@ import User from "../model/user.js";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { configureCloudinary } from "../utils/cloudinary.js";
 import fs from "fs/promises";
 import { createAccessToken } from "../middlewares/auth.js";
-
 
 // [SECTION] Register
 const Register = async (req, res) => {
   try {
-
     const cleanLocal = async () => {
       if (req.file?.path) {
-        try { await fs.unlink(req.file.path) } catch {}
+        try {
+          await fs.unlink(req.file.path);
+        } catch {}
       }
-    }
+    };
 
     if (!req.body.email || !req.body.email.includes("@")) {
       await cleanLocal();
       return res.status(400).send({ message: "Email invalid" });
     }
-
 
     if (!req.body.mobileNo || req.body.mobileNo.length !== 10) {
       await cleanLocal();
@@ -34,7 +32,6 @@ const Register = async (req, res) => {
         message: "Password must be at least 8 characters",
       });
     }
-
 
     const existingEmail = await User.findOne({ email: req.body.email });
     if (existingEmail) {
@@ -53,33 +50,12 @@ const Register = async (req, res) => {
     }
 
     let imageUrl = "";
-    let uploadedPublicId = "";
     let createdUserId = "";
-
-    if (req.file?.path) {
-      const cloudinary = configureCloudinary();
-
-      const upload = await cloudinary.uploader.upload(req.file.path, {
-        folder: "nomad/users",
-        resource_type: "image",
-      });
-
-      imageUrl = upload.secure_url;
-      uploadedPublicId = upload.public_id;
-
-      await fs.unlink(req.file.path).catch(() => {});
-    } 
-    else if (req.body.image) {
-      const cloudinary = configureCloudinary();
-
-      const upload = await cloudinary.uploader.upload(req.body.image, {
-        folder: "nomad/users",
-        resource_type: "image",
-      });
-
-      imageUrl = upload.secure_url;
-      uploadedPublicId = upload.public_id;
+    if (!req.file?.filename) {
+      await cleanLocal();
+      return res.status(400).send({ message: "Image is required" });
     }
+    imageUrl = `/uploads/users/${req.file.filename}`;
 
     const newUser = new User({
       firstName: req.body.firstName,
@@ -110,16 +86,9 @@ const Register = async (req, res) => {
       message: "Registered successfully",
       data: userObj,
     });
-
   } catch (error) {
     console.error("Register error:", error);
 
-    try {
-      if (uploadedPublicId) {
-        const cloudinary = configureCloudinary();
-        await cloudinary.uploader.destroy(uploadedPublicId).catch(() => {});
-      }
-    } catch (_) {}
     try {
       if (createdUserId) {
         await User.findByIdAndDelete(createdUserId).catch(() => {});
@@ -133,4 +102,172 @@ const Register = async (req, res) => {
   }
 };
 
-export {Register};
+// [SECTION] Login
+const Login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res
+        .status(400)
+        .send({ message: "Email and password are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).send({ message: "Invalid credentials" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(400).send({ message: "Invalid credentials" });
+    }
+
+    const token = createAccessToken(user);
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    return res.status(200).send({
+      message: "Logged in successfully",
+      data: userObj,
+    });
+  } catch (error) {
+    console.log("Error from Login", error);
+    return res.status(500).send({
+      message: "Login failed",
+      error: error.message,
+    });
+  }
+};
+
+// [SECTION] Get User
+const getUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      console.log("User Id required");
+      res.send(500).json({ message: "User Id is required" });
+    }
+    const user = await User.findById(id).select("-password");
+
+    if (!user) {
+      res.send(500).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      message: "User Found",
+      data: user,
+    });
+  } catch (error) {
+    console.log("Error from getUser", error);
+    return res.status(500).json({
+      message: "Something went Wrong",
+      error: error.message,
+    });
+  }
+};
+
+// [SECTION] Update User
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const cleanLocal = async () => {
+      if (req.file?.path) {
+        try {
+          await fs.unlink(req.file.path);
+        } catch {}
+      }
+    };
+
+    if (!id) {
+      await cleanLocal();
+      return res.status(400).json({
+        message: "User Id is required",
+      });
+    }
+
+    const user = await User.findById(id);
+    console.log(user);
+
+    if (!user) {
+      await cleanLocal();
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const { firstName, lastName, email, image, mobileNo } = req.body;
+
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (email) user.email = email;
+    if (mobileNo) user.mobileNo = mobileNo;
+
+    if (req.file?.filename) {
+      user.image = `/uploads/users/${req.file.filename}`;
+    }
+
+    const updatedUser = await user.save();
+    const userObj = updatedUser.toObject();
+    delete userObj.password;
+
+    return res.status(200).json({
+      message: "User updated successfully",
+      data: userObj,
+    });
+  } catch (error) {
+    console.error("Error from updateUser:", error);
+    try {
+      if (req.file?.path) {
+        await fs.unlink(req.file.path).catch(() => {});
+      }
+    } catch (_) {}
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+// [SECTION] Delete User
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "User ID is required",
+      });
+    }
+
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "User deleted successfully",
+      data: user,
+    });
+
+  } catch (error) {
+    console.error("Error from deleteUser:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+export { Register, Login, getUser, updateUser,deleteUser };
