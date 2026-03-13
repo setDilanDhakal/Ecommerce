@@ -7,7 +7,7 @@ function Hero() {
         <div className="absolute inset-x-0 top-0 h-24 md:h-40 bg-gradient-to-b from-black/90 to-transparent pointer-events-none" />
         <div className="absolute inset-x-0 bottom-0 h-24 md:h-40 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
 
-        <div className="relative z-10">
+        <div className="relative ">
           <Navigation />
         </div>
         <div className="relative z-10 flex flex-col justify-center items-center min-h-[60vh] md:min-h-[80vh] px-4 md:px-8 pt-20 md:pt-28 pb-12 md:pb-16 text-center gap-3 md:gap-4">

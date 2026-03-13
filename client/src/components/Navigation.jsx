@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 import { Menu, X } from "lucide-react"
-
 
 function GlassButton({ children, to }) {
   const [hovered, setHovered] = useState(false)
@@ -66,51 +65,9 @@ export default function Navigation() {
     { name: "About", href: "/about" },
   ]
 
-
-  // Lock body scroll and flag menu-open for global styles
-  useEffect(() => {
-    const html = document.documentElement
-    const body = document.body
-    if (open) {
-      body.style.overflow = "hidden"
-      html.classList.add("menu-open")
-      body.classList.add("menu-open")
-    } else {
-      body.style.overflow = ""
-      html.classList.remove("menu-open")
-      body.classList.remove("menu-open")
-    }
-    return () => {
-      body.style.overflow = ""
-      html.classList.remove("menu-open")
-      body.classList.remove("menu-open")
-    }
-  }, [open])
-
-
-  // Close menu on ESC key
-  useEffect(() => {
-    function handleEsc(e) {
-      if (e.key === "Escape") {
-        setOpen(false)
-      }
-    }
-
-    window.addEventListener("keydown", handleEsc)
-
-    return () => {
-      window.removeEventListener("keydown", handleEsc)
-    }
-  }, [])
-
-
-
   return (
     <div className="px-4 sm:px-6 md:px-8 py-3">
-
-
       <div className="flex items-center justify-between">
-
         <Link
           to="/"
           className="text-white text-xl sm:text-2xl italic font-bold tracking-wide"
@@ -118,10 +75,7 @@ export default function Navigation() {
           NOMAD.
         </Link>
 
-
-        {/* Desktop Menu */}
         <div className="hidden lg:flex items-center gap-6 text-white/90 text-sm">
-
           {menuItems.map((item) => (
             <Link
               key={item.name}
@@ -133,60 +87,39 @@ export default function Navigation() {
           ))}
 
           <GlassButton to="/login">Get Started</GlassButton>
-
         </div>
 
-
-        {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-white"
-          onClick={() => setOpen(true)}
-        >
+        <button className="lg:hidden text-white" onClick={() => setOpen(true)}>
           <Menu className="w-6 h-6" />
         </button>
-
       </div>
-
-
-
 
       <div
         className={`lg:hidden fixed inset-0 z-50 ${
           open ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-
-
         <div
-          className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
             open ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setOpen(false)}
         />
 
-
-
         <div
-          className={`absolute right-0 top-0 h-full w-3/4 max-w-sm bg-white text-black p-6 flex flex-col transition-transform duration-300 ${
+          className={`absolute right-0 top-0 z-[60] h-full w-3/4 max-w-sm bg-white text-black p-6 flex flex-col transition-transform duration-300 ${
             open ? "translate-x-0" : "translate-x-full"
           } shadow-xl`}
+          onClick={(e) => e.stopPropagation()}
         >
-
           <div className="flex items-center justify-between">
-
             <span className="font-bold text-lg">Menu</span>
-
             <button onClick={() => setOpen(false)}>
               <X className="w-6 h-6" />
             </button>
-
           </div>
 
-
-
-
           <nav className="mt-6 flex flex-col gap-5">
-
             {menuItems.map((item) => (
               <Link
                 key={item.name}
@@ -198,17 +131,12 @@ export default function Navigation() {
               </Link>
             ))}
 
-
             <div className="pt-4">
               <GlassButton to="/login">Get Started</GlassButton>
             </div>
-
           </nav>
-
         </div>
-
       </div>
-
     </div>
   )
 }
