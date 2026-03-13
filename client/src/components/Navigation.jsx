@@ -4,11 +4,37 @@ import { Equal, X } from "lucide-react"
 export default function Navigation() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    document.body.classList.toggle("menu-open", open);
-    document.body.style.overflow = open ? "hidden" : "";
+    const html = document.documentElement;
+    const body = document.body;
+    const root = document.getElementById("root");
+    if (open) {
+      html.classList.add("menu-open");
+      body.classList.add("menu-open");
+      html.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+      html.style.height = "100vh";
+      body.style.height = "100vh";
+      if (root) {
+        root.setAttribute("aria-hidden", "true");
+      }
+    } else {
+      html.classList.remove("menu-open");
+      body.classList.remove("menu-open");
+      html.style.overflow = "";
+      body.style.overflow = "";
+      html.style.height = "";
+      body.style.height = "";
+      if (root) {
+        root.removeAttribute("aria-hidden");
+      }
+    }
     return () => {
-      document.body.classList.remove("menu-open");
-      document.body.style.overflow = "";
+      html.classList.remove("menu-open");
+      body.classList.remove("menu-open");
+      html.style.overflow = "";
+      body.style.overflow = "";
+      html.style.height = "";
+      body.style.height = "";
     };
   }, [open]);
   const menuItems = [
