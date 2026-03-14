@@ -82,6 +82,35 @@ const getActiveProducts = async (req, res) => {
   }
 };
 
+// [SECTION] Search Products by Name
+const searchProductsByName = async (req, res) => {
+  try {
+    const query = String(req.query.q || "").trim();
+
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+
+    const products = await Product.find({
+      isActive: true,
+      name: { $regex: query, $options: "i" },
+    }).sort({ createdOn: -1 });
+
+    return res.status(200).json({
+      message: "Products searched successfully",
+      data: products,
+    });
+  } catch (error) {
+    console.error("Error from searchProductsByName:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 // [SECTION] Get Product by ID
 const getProduct = async (req, res) => {
   try {
@@ -242,6 +271,7 @@ export {
   createProduct,
   getProducts,
   getActiveProducts,
+  searchProductsByName,
   getProduct,
   updateProduct,
   updateProductStatus,

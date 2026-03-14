@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Mail, Lock, Apple, Chrome } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Mail, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth.js";
 
 function BackgroundSlider({ images, interval = 4000 }) {
   const [current, setCurrent] = useState(0);
@@ -31,7 +32,26 @@ function BackgroundSlider({ images, interval = 4000 }) {
 function Login(){
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = (e) => { e.preventDefault(); };
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login({ email, password });
+      navigate("/");
+    } catch (err) {
+      const message =
+        err?.response?.data?.message || err?.message || "Login failed";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const bgImages = [
     "https://images.unsplash.com/photo-1522402364115-7861689d1728?q=80&w=1247&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "https://images.unsplash.com/photo-1645996831587-a9d4a73586f9?q=80&w=1025&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -73,7 +93,16 @@ function Login(){
                 <input id="password" type="password" placeholder="••••••••" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-full bg-transparent text-white placeholder:text-white/50 outline-none border-0" />
               </div>
             </div>
-            <button type="submit" className="w-full rounded-lg bg-white text-black py-2.5 font-medium shadow-md transition-colors hover:bg-neon hover:text-black">Log In</button>
+            {error ? (
+              <p className="text-sm text-red-400">{error}</p>
+            ) : null}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-white text-black py-2.5 font-medium shadow-md transition-colors hover:bg-neon hover:text-black disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? "Logging In..." : "Log In"}
+            </button>
           </form>
 
           <p className="text-xs text-white/60 text-center mt-6">

@@ -1,8 +1,9 @@
-import Navigation from "../components/Navigation"
+import UserNav from '../components/UserNav'
 
 function Product (){
     return(
         <>
+            <UserNav />
 
 
         </>

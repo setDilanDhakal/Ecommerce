@@ -3,6 +3,7 @@ import {
   createProduct,
   getProducts,
   getActiveProducts,
+  searchProductsByName,
   getProduct,
   updateProduct,
   updateProductStatus,
@@ -16,6 +17,7 @@ const productRoute = Router();
 productRoute.route("/").post(verify, verifyAdmin, uploadProduct.single("image"), createProduct);
 productRoute.route("/").get(verify, verifyAdmin,getProducts);
 productRoute.route("/active").get( getActiveProducts);
+productRoute.route("/search").get(searchProductsByName);
 productRoute.route("/:id").get( getProduct);
 productRoute.route("/:id").put(verify, verifyAdmin, uploadProduct.single("image"), updateProduct);
 productRoute.route("/:id/status").patch(verify, verifyAdmin, updateProductStatus);

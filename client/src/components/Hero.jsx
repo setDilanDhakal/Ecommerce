@@ -1,6 +1,10 @@
 import Navigation from "./Navigation";
+import { Link } from "react-router-dom";
+import { useAuth } from "../context/useAuth.js";
 
 function Hero() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <>
       <div className="relative bg-[url('https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center bg-no-repeat">
@@ -30,23 +34,47 @@ function Hero() {
           >
             ESSENCE
           </p>
-          <div className="text-sm space-x-2 mt-6 md:mt-8">
-            <button>
-              <a
-                href=""
-                className="hero-cta inline-block  bg-neon text-black py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105  hover:border-neon"
+          <div className="text-sm mt-6 md:mt-8">
+            <div className="lg:hidden">
+              {isAuthenticated ? (
+                <div className="flex items-center justify-center gap-2">
+                  <Link
+                    to="/product"
+                    className="hero-cta inline-block bg-neon text-black py-2 md:py-3 px-6 md:px-8 transition-transform duration-300 ease-out hover:scale-105 hover:border-neon"
+                  >
+                    Shop Collection
+                  </Link>
+                  <Link
+                    to="/story"
+                    className="hero-cta inline-block border border-neon text-neon py-2 md:py-3 px-6 md:px-8 transition-transform duration-300 ease-out hover:scale-105 hover:border-neon"
+                  >
+                    LookBook
+                  </Link>
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="hero-cta inline-block bg-neon text-black py-2 md:py-3 px-8 md:px-8 transition-transform duration-300 ease-out hover:scale-105 hover:border-neon"
+                >
+                  Get Start
+                </Link>
+              )}
+            </div>
+
+            <div className="hidden lg:flex items-center gap-2">
+              <Link
+                to="/product"
+                className="hero-cta inline-block bg-neon text-black py-2 md:py-3 px-6 md:px-8 transition-transform duration-300 ease-out hover:scale-105 hover:border-neon"
               >
                 Shop Collection
-              </a>
-            </button>
-            <button>
-              <a
-                href=""
-                className="hero-cta inline-block border border-neon text-neon py-2 md:py-3 px-6 md:px-8  transition-transform duration-300 ease-out hover:scale-105  hover:border-neon"
+              </Link>
+              <Link
+                to="/story"
+                className="hero-cta inline-block border border-neon text-neon py-2 md:py-3 px-10 md:px-8 transition-transform duration-300 ease-out hover:scale-105 hover:border-neon"
               >
                 LookBook
-              </a>
-            </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
