@@ -1,20 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
-import { Loader2, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Loader2, Search, ShoppingCart } from "lucide-react";
 import UserNav from "../components/UserNav";
 import { api, toAbsoluteUrl } from "../lib/api.js";
+import { useAuth } from "../context/useAuth.js";
 
 function formatMoney(value) {
   const num = Number(value || 0);
   return Number.isFinite(num) ? `Rs${num.toFixed(2)}` : "Rs0.00";
 }
 
-function ProductCard({ product }) {
+function ProductCard({ product, onAddToCart, adding, disableAddToCart }) {
   const tags = [product.genderType, product.season].filter(Boolean);
 
   return (
     <Link
-      to="/product/detail"
+      to={`/product/detail/${product._id}`}
       className="group w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl"
     >
       <div className="relative h-44 w-full">
@@ -59,16 +60,34 @@ function ProductCard({ product }) {
             ))}
           </div>
         </div>
+
+        <button
+          type="button"
+          disabled={adding || disableAddToCart}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onAddToCart?.(product);
+          }}
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 disabled:opacity-60"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          {disableAddToCart ? "Admins can't add to cart" : adding ? "Adding..." : "Add to Cart"}
+        </button>
       </div>
     </Link>
   );
 }
 
 function Product() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [query, setQuery] = useState("");
+  const [addingId, setAddingId] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -126,6 +145,12 @@ function Product() {
             </div>
           </div>
 
+          {success ? (
+            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+              {success}
+            </div>
+          ) : null}
+
           {loading ? (
             <div className="mt-10 flex items-center justify-center gap-2 text-white/70">
               <Loader2 className="h-5 w-5 animate-spin" />
@@ -146,7 +171,42 @@ function Product() {
                   No products found
                 </div>
               ) : (
-                filtered.map((p) => <ProductCard key={p._id} product={p} />)
+                filtered.map((p) => (
+                  <ProductCard
+                    key={p._id}
+                    product={p}
+                    adding={addingId === p._id}
+                    disableAddToCart={Boolean(user?.isAdmin)}
+                    onAddToCart={async (product) => {
+                      if (!user) {
+                        navigate("/login");
+                        return;
+                      }
+                      if (user?.isAdmin) {
+                        setError("Admins cannot use cart");
+                        return;
+                      }
+                      setError("");
+                      setSuccess("");
+                      setAddingId(product._id);
+                      try {
+                        await api.post("/carts/items", {
+                          productId: product._id,
+                          quantity: 1,
+                        });
+                        setSuccess("Added to cart");
+                      } catch (err) {
+                        setError(
+                          err?.response?.data?.message ||
+                            err?.message ||
+                            "Failed to add to cart"
+                        );
+                      } finally {
+                        setAddingId("");
+                      }
+                    }}
+                  />
+                ))
               )}
             </div>
           ) : null}

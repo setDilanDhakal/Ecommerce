@@ -9,7 +9,7 @@ function Home() {
 
 
   return (
-    <div >
+    <div className="bg-neutral-950 text-white">
       <Slider />
       <Hero />
       <Slide />

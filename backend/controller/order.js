@@ -195,6 +195,48 @@ const deleteOrder = async (req, res) => {
   }
 };
 
+// [SECTION] Delete My Order
+const deleteMyOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = String(req.user?.id || "");
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Valid order ID is required" });
+    }
+
+    const order = await Order.findById(id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.userId !== userId) {
+      return res.status(403).json({ message: "Action forbidden" });
+    }
+
+    const status = String(order.status || "");
+    if (status.toLowerCase() === "delivered") {
+      return res.status(400).json({ message: "Delivered orders cannot be deleted" });
+    }
+
+    await Order.findByIdAndDelete(id);
+    return res.status(200).json({
+      message: "Order deleted successfully",
+      data: order,
+    });
+  } catch (error) {
+    console.error("Error from deleteMyOrder:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
 export {
   createOrder,
   getOrders,
@@ -202,4 +244,5 @@ export {
   getOrder,
   updateOrderStatus,
   deleteOrder,
+  deleteMyOrder,
 };

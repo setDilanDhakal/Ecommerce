@@ -6,7 +6,7 @@ function UserNav() {
   const { user } = useAuth();
 
   return (
-    <nav className="px-9 relative border-b h-16 flex items-center justify-between px-4 overflow-hidden bg-black/90 backdrop-blur-md">
+    <nav className="px-9 relative  h-16 flex items-center justify-between px-4 overflow-hidden bg-black/90 backdrop-blur-md">
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <div className="absolute inset-0" />
       </div>
@@ -22,7 +22,7 @@ function UserNav() {
 
       <div className="flex items-center gap-3">
         {user ? (
-          <>
+          <Link to="/profile" className="flex items-center gap-3">
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-xs font-semibold uppercase text-neon">
                 {user.firstName || user.email}
@@ -39,7 +39,7 @@ function UserNav() {
                 className="size-full rounded-full object-cover"
               />
             </div>
-          </>
+          </Link>
         ) : (
           <Link
             to="/login"

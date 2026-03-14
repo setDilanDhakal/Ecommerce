@@ -101,7 +101,10 @@ export default function Navigation() {
 
           {user ? (
             <>
-              <div className="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-3 py-1.5 backdrop-blur">
+              <Link
+                to="/profile"
+                className="flex items-center gap-3 rounded-full bg-white/10 border border-white/20 px-3 py-1.5 backdrop-blur"
+              >
                 <img
                   src={user.image ? toAbsoluteUrl(user.image) : "/vite.svg"}
                   alt="profile"
@@ -110,7 +113,7 @@ export default function Navigation() {
                 <span className="text-sm font-semibold text-white">
                   {user.firstName || user.email}
                 </span>
-              </div>
+              </Link>
               <GlassButton
                 onClick={() => {
                   logout()
@@ -168,7 +171,11 @@ export default function Navigation() {
 
           <div className="relative mt-6 flex flex-1 flex-col">
             {user ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+              <Link
+                to="/profile"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3"
+              >
                 <img
                   src={user.image ? toAbsoluteUrl(user.image) : "/vite.svg"}
                   alt="profile"
@@ -180,7 +187,7 @@ export default function Navigation() {
                   </span>
                   <span className="text-xs text-white/60">{user.email}</span>
                 </div>
-              </div>
+              </Link>
             ) : (
               <div className="flex items-center gap-2">
                 <GlassButton to="/login" onClick={() => setOpen(false)}>

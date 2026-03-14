@@ -76,9 +76,9 @@ function TestimonialsColumn({ testimonialsList, duration = 16, className = "" })
         {looped.map((item, index) => (
           <li
             key={`${item.name}-${index}`}
-            className="max-w-xs rounded-3xl border p-6 shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="max-w-xs rounded-3xl border border-white/10 bg-white/5 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/10"
           >
-            <p className="leading-relaxed">{item.text}</p>
+            <p className="leading-relaxed text-white/80">{item.text}</p>
             <div className="mt-5 flex items-center gap-3">
               <img
                 src={item.image}
@@ -86,8 +86,8 @@ function TestimonialsColumn({ testimonialsList, duration = 16, className = "" })
                 className="h-10 w-10 rounded-full object-cover"
               />
               <div>
-                <p className="font-semibold leading-5">{item.name}</p>
-                <p className="text-sm opacity-70">{item.role}</p>
+                <p className="font-semibold leading-5 text-white">{item.name}</p>
+                <p className="text-sm text-white/60">{item.role}</p>
               </div>
             </div>
           </li>
@@ -103,7 +103,7 @@ function Testimonial() {
   const thirdColumn = testimonials.slice(6, 9);
 
   return (
-    <section className="relative overflow-hidden py-16 transition-colors duration-300 bg-white text-neutral-900">
+    <section className="relative overflow-hidden py-16 bg-neutral-950 text-white">
       <style>{`
         .testimonial-marquee {
           animation-name: testimonial-scroll;
@@ -118,13 +118,13 @@ function Testimonial() {
 
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-12 max-w-xl text-center">
-          <div className="inline-flex rounded-full border border-neutral-300 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-neutral-600">
+          <div className="inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white/70">
             Testimonials
           </div>
           <h2 className="mt-5 text-3xl font-extrabold tracking-tight md:text-5xl">
             What our users say
           </h2>
-          <p className="mt-4 text-base text-neutral-500">
+          <p className="mt-4 text-base text-white/60">
             Discover how teams streamline operations with our platform.
           </p>
         </div>
@@ -133,17 +133,17 @@ function Testimonial() {
           <TestimonialsColumn
             testimonialsList={firstColumn}
             duration={15}
-            className="[&_*]:bg-white [&_*]:border-neutral-200"
+            className=""
           />
           <TestimonialsColumn
             testimonialsList={secondColumn}
             duration={19}
-            className="hidden md:block [&_*]:bg-white [&_*]:border-neutral-200"
+            className="hidden md:block"
           />
           <TestimonialsColumn
             testimonialsList={thirdColumn}
             duration={17}
-            className="hidden lg:block [&_*]:bg-white [&_*]:border-neutral-200"
+            className="hidden lg:block"
           />
         </div>
       </div>

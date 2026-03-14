@@ -6,6 +6,7 @@ import Product from './pages/Product.jsx'
 import Story from './pages/Story.jsx'
 import Cart from './pages/Cart.jsx'
 import ProductDetail from './pages/ProductDetail.jsx'
+import Profile from './pages/Profile.jsx'
 import AdminProduct from './pages/AdminProduct.jsx'
 import Footer from './components/Footer.jsx'
 import AuthProvider from './context/AuthContext.jsx'
@@ -22,7 +23,8 @@ function AppLayout() {
         <Route path="/login" element={<Login />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/product" element={<Product />} />
-        <Route path="/product/detail" element={<ProductDetail />} />
+        <Route path="/product/detail/:id" element={<ProductDetail />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/story" element={<Story />} />
         <Route path="/admin" element={<AdminProduct />} />
       </Routes>

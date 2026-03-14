@@ -26,8 +26,8 @@ function Banner() {
   return (
     <>
       <div ref={revealRef} className="px-4 sm:px-6 md:px-8 pt-12 pb-4 sm:pb-8">
-        <p className="text-black/90 text-sm mb-2">
-          <span className="text-neutral-700">Hot and fresh:</span> Like your
+        <p className="text-white/70 text-sm mb-2">
+          <span className="text-white/60">Hot and fresh:</span> Like your
           morning coffee!
         </p>
 

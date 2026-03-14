@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BadgeCheck,
@@ -43,6 +43,8 @@ function AdminProduct() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [users, setUsers] = useState([]);
+  const [orderUsersById, setOrderUsersById] = useState({});
+  const [orderProductsById, setOrderProductsById] = useState({});
   const [userSearch, setUserSearch] = useState("");
   const [newProductPreviewUrl, setNewProductPreviewUrl] = useState("");
   const [editPreviewUrl, setEditPreviewUrl] = useState("");
@@ -120,7 +122,7 @@ function AdminProduct() {
     });
   }, [userSearch, users]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setError("");
     setLoading(true);
     try {
@@ -131,22 +133,84 @@ function AdminProduct() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchOrders = async () => {
+  const orderUsersByIdRef = useRef({});
+  const orderProductsByIdRef = useRef({});
+
+  useEffect(() => {
+    orderUsersByIdRef.current = orderUsersById;
+  }, [orderUsersById]);
+
+  useEffect(() => {
+    orderProductsByIdRef.current = orderProductsById;
+  }, [orderProductsById]);
+
+  const fetchOrders = useCallback(async () => {
     setError("");
     setLoading(true);
     try {
       const response = await api.get("/orders");
-      setOrders(response?.data?.data || []);
+      const nextOrders = response?.data?.data || [];
+      setOrders(nextOrders);
+
+      const userIds = Array.from(
+        new Set(nextOrders.map((o) => String(o?.userId || "")).filter(Boolean))
+      );
+      const productIds = Array.from(
+        new Set(
+          nextOrders
+            .flatMap((o) => (Array.isArray(o?.productsOrdered) ? o.productsOrdered : []))
+            .map((it) => String(it?.productId || ""))
+            .filter(Boolean)
+        )
+      );
+
+      const missingUsers = userIds.filter((id) => !orderUsersByIdRef.current[id]);
+      if (missingUsers.length > 0) {
+        const fetched = await Promise.all(
+          missingUsers.map((id) =>
+            api
+              .get(`/users/${id}`)
+              .then((r) => r?.data?.data || null)
+              .catch(() => null)
+          )
+        );
+        const mapped = fetched
+          .filter(Boolean)
+          .reduce((acc, u) => {
+            acc[String(u._id)] = u;
+            return acc;
+          }, {});
+        setOrderUsersById((prev) => ({ ...prev, ...mapped }));
+      }
+
+      const missingProducts = productIds.filter((id) => !orderProductsByIdRef.current[id]);
+      if (missingProducts.length > 0) {
+        const fetched = await Promise.all(
+          missingProducts.map((id) =>
+            api
+              .get(`/products/${id}`)
+              .then((r) => r?.data?.data || null)
+              .catch(() => null)
+          )
+        );
+        const mapped = fetched
+          .filter(Boolean)
+          .reduce((acc, p) => {
+            acc[String(p._id)] = p;
+            return acc;
+          }, {});
+        setOrderProductsById((prev) => ({ ...prev, ...mapped }));
+      }
     } catch (err) {
       setError(err?.response?.data?.message || err?.message || "Failed to load orders");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setError("");
     setLoading(true);
     try {
@@ -157,14 +221,14 @@ function AdminProduct() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!user?.isAdmin) return;
     if (activePage === "All Products") fetchProducts();
     if (activePage === "Users") fetchUsers();
     if (activePage === "Orders") fetchOrders();
-  }, [activePage, user?.isAdmin]);
+  }, [activePage, fetchOrders, fetchProducts, fetchUsers, user?.isAdmin]);
 
   const handleCreateProduct = async (e) => {
     e.preventDefault();
@@ -680,13 +744,18 @@ function AdminProduct() {
                       key={o._id}
                       className="rounded-2xl border border-white/10 bg-black/20 p-4"
                     >
+                      {(() => {
+                        const u = orderUsersById[String(o.userId)];
+                        const name = `${u?.firstName || ""} ${u?.lastName || ""}`.trim();
+                        const userLabel = name || u?.email || String(o.userId || "").slice(-8);
+                        return (
                       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold">
                             Order #{String(o._id).slice(-8)}
                           </span>
                           <span className="text-xs text-white/60">
-                            User: {o.userId} • Items: {o.productsOrdered?.length || 0}
+                            User: {userLabel} • Items: {o.productsOrdered?.length || 0}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
@@ -720,6 +789,8 @@ function AdminProduct() {
                           </button>
                         </div>
                       </div>
+                        );
+                      })()}
 
                       <div className="mt-4 overflow-x-auto">
                         <table className="min-w-full text-left text-sm">
@@ -733,7 +804,10 @@ function AdminProduct() {
                           <tbody className="text-white/80">
                             {(o.productsOrdered || []).map((it, idx) => (
                               <tr key={`${o._id}-${idx}`} className="border-t border-white/10">
-                                <td className="py-2 pr-3">{it.productId}</td>
+                                <td className="py-2 pr-3">
+                                  {orderProductsById[String(it.productId)]?.name ||
+                                    String(it.productId || "").slice(-8)}
+                                </td>
                                 <td className="py-2 pr-3">{it.quantity}</td>
                                 <td className="py-2 pr-3">{formatMoney(it.subtotal)}</td>
                               </tr>

@@ -34,6 +34,9 @@ const getMyCart = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    if (req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admins cannot use cart" });
+    }
 
     const cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -68,6 +71,9 @@ const addToCart = async (req, res) => {
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admins cannot use cart" });
     }
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
@@ -128,6 +134,9 @@ const updateCartItem = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    if (req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admins cannot use cart" });
+    }
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ message: "Valid productId is required" });
@@ -174,6 +183,9 @@ const removeCartItem = async (req, res) => {
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+    if (req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admins cannot use cart" });
+    }
 
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({ message: "Valid productId is required" });
@@ -207,6 +219,9 @@ const clearCart = async (req, res) => {
     const userId = String(req.user?.id || "");
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
+    }
+    if (req.user?.isAdmin) {
+      return res.status(403).json({ message: "Admins cannot use cart" });
     }
 
     const cart = await Cart.findOne({ userId });
