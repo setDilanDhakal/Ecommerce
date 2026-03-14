@@ -18,13 +18,18 @@ export const createAccessToken = (user) => {
 
 // [SECTION] Verify Token
 export const verify = (req, res, next) => {
-  let token = req.headers.authorization;
+  const authorization = req.headers.authorization;
+  let token = "";
 
-  if (typeof token === "undefined") {
-    return res.status(403).send({ auth: "Failed. No Token" });
+  if (authorization && authorization.startsWith("Bearer ")) {
+    token = authorization.slice(7);
+  } else if (req.cookies?.token) {
+    token = req.cookies.token;
   }
 
-  token = token.slice(7, token.length);
+  if (!token) {
+    return res.status(403).send({ auth: "Failed. No Token" });
+  }
 
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err, decodedToken) => {
     if (err) {
@@ -39,8 +44,6 @@ export const verify = (req, res, next) => {
 
 // [SECTION] Verify Admin
 export const verifyAdmin = (req, res, next) => {
-  console.log(req.user);
-
   if (req.user.isAdmin) {
     next();
   } else {

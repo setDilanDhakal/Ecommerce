@@ -1,9 +1,12 @@
 import User from "../model/user.js";
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import fs from "fs/promises";
 import { createAccessToken } from "../middlewares/auth.js";
+
+const canAccessUser = (reqUser, targetUserId) => {
+  if (!reqUser?.id) return false;
+  return reqUser.isAdmin || String(reqUser.id) === String(targetUserId);
+};
 
 // [SECTION] Register
 const Register = async (req, res) => {
@@ -57,6 +60,13 @@ const Register = async (req, res) => {
     }
     imageUrl = `/uploads/users/${req.file.filename}`;
 
+
+    const requestedAdmin = String(req.body.isAdmin).toLowerCase() === "true";
+    const adminKeyValid =
+      process.env.ADMIN_REGISTRATION_KEY &&
+      req.body.adminKey === process.env.ADMIN_REGISTRATION_KEY;
+    const isAdmin = requestedAdmin && Boolean(adminKeyValid);
+
     const newUser = new User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -64,6 +74,7 @@ const Register = async (req, res) => {
       password: bcrypt.hashSync(req.body.password, 10),
       mobileNo: req.body.mobileNo,
       image: imageUrl,
+      isAdmin,
     });
 
     await newUser.save();
@@ -154,13 +165,17 @@ const getUser = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) {
-      console.log("User Id required");
-      res.send(500).json({ message: "User Id is required" });
+      return res.status(400).json({ message: "User Id is required" });
     }
+
+    if (!canAccessUser(req.user, id)) {
+      return res.status(403).json({ message: "Action forbidden" });
+    }
+
     const user = await User.findById(id).select("-password");
 
     if (!user) {
-      res.send(500).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res.status(200).json({
@@ -195,8 +210,14 @@ const updateUser = async (req, res) => {
       });
     }
 
+    if (!canAccessUser(req.user, id)) {
+      await cleanLocal();
+      return res.status(403).json({
+        message: "Action forbidden",
+      });
+    }
+
     const user = await User.findById(id);
-    console.log(user);
 
     if (!user) {
       await cleanLocal();
@@ -249,6 +270,12 @@ const deleteUser = async (req, res) => {
       });
     }
 
+    if (!canAccessUser(req.user, id)) {
+      return res.status(403).json({
+        message: "Action forbidden",
+      });
+    }
+
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
@@ -285,6 +312,12 @@ const updatePassword = async (req, res) => {
     if (!password) {
       return res.status(400).json({
         message: "Password is required",
+      });
+    }
+
+    if (String(req.user?.id) !== String(id)) {
+      return res.status(403).json({
+        message: "You can update only your own password",
       });
     }
 

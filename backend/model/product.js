@@ -16,6 +16,11 @@ const productSchema = new mongoose.Schema({
     required: [true, "Price is required"],
   },
 
+  image: {
+    type: String,
+    required: [true, "Image is required"],
+  },
+
   genderType: {
     type: String,
     enum: ["male", "female", "other"],
