@@ -338,4 +338,20 @@ const updatePassword = async (req, res) => {
   }
 };
 
-export { Register, Login, getUser, updateUser, deleteUser, updatePassword };
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find({}).select("-password").sort({ createdAt: -1 });
+    return res.status(200).json({
+      message: "Users fetched successfully",
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error from getUsers:", error);
+    return res.status(500).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+export { Register, Login, getUser, updateUser, deleteUser, updatePassword, getUsers };

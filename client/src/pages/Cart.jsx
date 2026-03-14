@@ -72,12 +72,12 @@ function Cart() {
   return (
     <>
       <UserNav />
-      <div className="min-h-screen bg-neutral-100">
+      <div className="min-h-screen bg-neutral-950 text-white">
         <div className="container mx-auto px-4 py-6 sm:px-6 md:px-8 lg:py-10">
-          <p className="text-2xl sm:text-4xl text-black font-semibold tracking-tight">
+          <p className="text-2xl sm:text-4xl font-semibold tracking-tight">
             Your Cart
           </p>
-          <p className="mt-1 text-sm text-black/60">
+          <p className="mt-1 text-sm text-white/60">
             {totalItems} item{totalItems > 1 ? "s" : ""} in your bag
           </p>
 
@@ -86,7 +86,7 @@ function Cart() {
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="rounded-xl border border-black/10 bg-white p-3 sm:p-4"
+                  className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4"
                 >
                   <div className="flex flex-col gap-4 sm:flex-row">
                     <img
@@ -98,26 +98,26 @@ function Cart() {
                     <div className="flex-1">
                       <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h2 className="text-base sm:text-lg font-semibold text-black">
+                          <h2 className="text-base sm:text-lg font-semibold text-white">
                             {item.name}
                           </h2>
-                          <p className="mt-1 text-sm text-black/60">
+                          <p className="mt-1 text-sm text-white/60">
                             {item.description}
                           </p>
                         </div>
-                        <p className="text-base sm:text-lg font-semibold text-black">
+                        <p className="text-base sm:text-lg font-semibold text-white">
                           {formatMoney(item.price * item.quantity)}
                         </p>
                       </div>
 
                       <div className="mt-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <p className="text-sm font-medium text-black/70">
+                          <p className="text-sm font-medium text-white/70">
                             {formatMoney(item.price)} each
                           </p>
                           <button
                             type="button"
-                            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-600 hover:bg-red-50 hover:text-red-700"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-red-200 hover:bg-red-500/10 hover:text-red-200"
                             onClick={() => removeItem(item.id)}
                             aria-label="Remove item"
                           >
@@ -125,20 +125,20 @@ function Cart() {
                           </button>
                         </div>
 
-                        <div className="flex items-center rounded-md border border-black/15">
+                        <div className="flex items-center rounded-md border border-white/15">
                           <button
                             type="button"
-                            className="h-9 w-9 text-lg font-semibold text-black hover:bg-black/5"
+                            className="h-9 w-9 text-lg font-semibold text-white hover:bg-white/10"
                             onClick={() => updateQuantity(item.id, -1)}
                           >
                             -
                           </button>
-                          <span className="w-10 text-center text-sm font-medium text-black">
+                          <span className="w-10 text-center text-sm font-medium text-white">
                             {item.quantity}
                           </span>
                           <button
                             type="button"
-                            className="h-9 w-9 text-lg font-semibold text-black hover:bg-black/5"
+                            className="h-9 w-9 text-lg font-semibold text-white hover:bg-white/10"
                             onClick={() => updateQuantity(item.id, 1)}
                           >
                             +
@@ -151,23 +151,23 @@ function Cart() {
               ))}
             </div>
 
-            <div className="h-fit rounded-xl border border-black/10 bg-white p-4 sm:p-5">
-              <p className="text-lg font-semibold text-black">Calculation</p>
+            <div className="h-fit rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+              <p className="text-lg font-semibold text-white">Calculation</p>
 
               <div className="mt-4 space-y-3 text-sm sm:text-base">
-                <div className="flex items-center justify-between text-black/70">
+                <div className="flex items-center justify-between text-white/70">
                   <span>Subtotal</span>
                   <span>{formatMoney(subtotal)}</span>
                 </div>
-                <div className="flex items-center justify-between text-black/70">
+                <div className="flex items-center justify-between text-white/70">
                   <span>Shipping</span>
                   <span>{formatMoney(shipping)}</span>
                 </div>
-                <div className="flex items-center justify-between text-black/70">
+                <div className="flex items-center justify-between text-white/70">
                   <span>Tax (8%)</span>
                   <span>{formatMoney(tax)}</span>
                 </div>
-                <div className="border-t border-black/10 pt-3 flex items-center justify-between text-black font-semibold text-base sm:text-lg">
+                <div className="border-t border-white/10 pt-3 flex items-center justify-between text-white font-semibold text-base sm:text-lg">
                   <span>Total</span>
                   <span>{formatMoney(total)}</span>
                 </div>
@@ -175,7 +175,7 @@ function Cart() {
 
               <button
                 type="button"
-                className="mt-5 w-full rounded-md bg-black px-4 py-3 text-sm sm:text-base font-semibold text-white hover:bg-black/90 transition-colors"
+                className="mt-5 w-full rounded-xl bg-neon px-4 py-3 text-sm sm:text-base font-semibold text-black hover:brightness-95 transition-colors"
               >
                 Checkout
               </button>
@@ -184,11 +184,11 @@ function Cart() {
         </div>
 
         <div className="container mx-auto px-4 pb-8 sm:px-6 md:px-8 lg:pb-12">
-          <div className="rounded-2xl border border-black/10 bg-white p-5 sm:p-6 md:p-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-5 sm:p-6 md:p-8">
             <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div className="max-w-xl">
-                <p className="text-lg sm:text-xl font-semibold text-black">Stay Updated</p>
-                <p className="mt-2 text-sm sm:text-base text-black/60">
+                <p className="text-lg sm:text-xl font-semibold text-white">Stay Updated</p>
+                <p className="mt-2 text-sm sm:text-base text-white/60">
                   Subscribe to our newsletter to get the latest updates and special offers.
                 </p>
               </div>
@@ -197,11 +197,11 @@ function Cart() {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="h-11 w-full sm:w-72 rounded-md border border-black/15 px-3 text-sm text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-black/20"
+                  className="h-11 w-full sm:w-72 rounded-xl border border-white/10 bg-white/5 px-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-white/20"
                 />
                 <button
                   type="button"
-                  className="h-11 rounded-md bg-black px-5 text-sm font-semibold text-white hover:bg-black/90 transition-colors"
+                  className="h-11 rounded-xl bg-white/10 px-5 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
                 >
                   Subscribe
                 </button>

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Link } from "react-router-dom"
-import { BookOpen, Info, LogOut, Menu, ShoppingBag, ShoppingCart, X } from "lucide-react"
+import { BookOpen, Info, LogOut, Menu, Shield, ShoppingBag, ShoppingCart, X } from "lucide-react"
 import { useAuth } from "../context/useAuth.js"
 import { toAbsoluteUrl } from "../lib/api.js"
 
@@ -66,13 +66,15 @@ export default function Navigation() {
     { name: "Products", href: "/product" },
     { name: "Story", href: "/story" },
     { name: "Cart", href: "/cart" },
+    ...(user?.isAdmin ? [{ name: "Admin", href: "/admin" }] : []),
     { name: "About", href: "/about" },
-  ].filter((item) => item.name !== "Cart" || Boolean(user))
+  ].filter((item) => item.name !== "Cart" || (Boolean(user) && !user?.isAdmin))
 
   const menuIcons = {
     Products: ShoppingBag,
     Story: BookOpen,
     Cart: ShoppingCart,
+    Admin: Shield,
     About: Info,
   }
 
