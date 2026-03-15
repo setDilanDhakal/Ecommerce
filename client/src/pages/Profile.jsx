@@ -34,7 +34,10 @@ function Profile() {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState("");
   const [deletingOrderId, setDeletingOrderId] = useState("");
+  const [updatingStatusId, setUpdatingStatusId] = useState("");
   const [productsById, setProductsById] = useState({});
+
+  const orderStatuses = ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"];
 
   useEffect(() => {
     if (!user) navigate("/login");
@@ -75,11 +78,12 @@ function Profile() {
   }, [setUser, user?._id]);
 
   const fetchOrders = useCallback(async () => {
-    if (!user?._id || user.isAdmin) return;
+    if (!user?._id) return;
     setOrdersLoading(true);
     setOrdersError("");
     try {
-      const response = await api.get("/orders/my");
+      const endpoint = user?.isAdmin ? "/orders" : "/orders/my";
+      const response = await api.get(endpoint);
       const nextOrders = response?.data?.data || [];
       setOrders(nextOrders);
 
@@ -162,6 +166,30 @@ function Profile() {
       );
     } finally {
       setDeletingOrderId("");
+    }
+  };
+
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    if (!user?.isAdmin) return;
+    setUpdatingStatusId(orderId);
+    setOrdersError("");
+    setError("");
+    setSuccess("");
+    try {
+      const response = await api.patch(`/orders/${orderId}/status`, { status: newStatus });
+      const updatedOrder = response?.data?.data;
+      if (updatedOrder) {
+        setOrders((prev) =>
+          prev.map((o) => (o._id === orderId ? { ...o, status: updatedOrder.status } : o))
+        );
+        setSuccess("Order status updated");
+      }
+    } catch (err) {
+      setOrdersError(
+        err?.response?.data?.message || err?.message || "Failed to update order status"
+      );
+    } finally {
+      setUpdatingStatusId("");
     }
   };
 
@@ -348,91 +376,99 @@ function Profile() {
               </div>
             </div>
 
-            {!user.isAdmin ? (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Order History</h2>
-                  {ordersLoading ? (
-                    <div className="inline-flex items-center gap-2 text-sm text-white/70">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Loading
-                    </div>
-                  ) : null}
-                </div>
-
-                {ordersError ? (
-                  <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
-                    {ordersError}
-                  </div>
-                ) : null}
-
-                {!ordersLoading && !ordersError ? (
-                  <div className="mt-4 overflow-hidden rounded-2xl border border-white/10">
-                    <div className="grid grid-cols-[0.9fr_1.2fr_0.7fr_0.7fr_0.6fr] gap-3 border-b border-white/10 bg-black/30 px-4 py-3 text-xs font-semibold text-white/70">
-                      <div>ORDER</div>
-                      <div>ITEMS</div>
-                      <div>STATUS</div>
-                      <div className="text-right">TOTAL</div>
-                      <div className="text-right">ACTIONS</div>
-                    </div>
-                    <div className="divide-y divide-white/10 bg-black/20">
-                      {orders.length === 0 ? (
-                        <div className="px-4 py-8 text-center text-sm text-white/60">
-                          No orders yet
-                        </div>
-                      ) : (
-                        orders.map((o) => (
-                          <div
-                            key={o._id}
-                            className="grid grid-cols-[0.9fr_1.2fr_0.7fr_0.7fr_0.6fr] gap-3 px-4 py-3"
-                          >
-                            <div className="flex flex-col">
-                              <span className="text-sm font-semibold">
-                                #{String(o._id).slice(-8)}
-                              </span>
-                              <span className="text-xs text-white/60">
-                                {o.orderedOn
-                                  ? new Date(o.orderedOn).toLocaleDateString()
-                                  : o.createdAt
-                                    ? new Date(o.createdAt).toLocaleDateString()
-                                    : ""}
-                              </span>
-                            </div>
-                            <div className="flex items-center text-sm text-white/80">
-                              <span className="line-clamp-2">{orderItemsLabel(o)}</span>
-                            </div>
-                            <div className="flex items-center text-sm text-white/80">
-                              {o.status || "Pending"}
-                            </div>
-                            <div className="flex items-center justify-end text-sm font-semibold">
-                              {formatMoney(o.totalPrice)}
-                            </div>
-                            <div className="flex items-center justify-end">
-                              <button
-                                type="button"
-                                disabled={
-                                  deletingOrderId === o._id ||
-                                  String(o.status || "").toLowerCase() === "delivered"
-                                }
-                                onClick={() => handleDeleteOrder(o._id)}
-                                className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/15 disabled:opacity-60"
-                              >
-                                {deletingOrderId === o._id ? "Deleting..." : "Delete"}
-                              </button>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold">Order History</h2>
-                <p className="mt-3 text-sm text-white/60">Admins don’t have order history.</p>
+                {ordersLoading ? (
+                  <div className="inline-flex items-center gap-2 text-sm text-white/70">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Loading
+                  </div>
+                ) : null}
               </div>
-            )}
+
+              {ordersError ? (
+                <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {ordersError}
+                </div>
+              ) : null}
+
+              {!ordersLoading && !ordersError ? (
+                <div className="mt-4 overflow-hidden rounded-2xl border border-white/10">
+                  <div className="grid grid-cols-[0.9fr_1.2fr_0.7fr_0.7fr_0.6fr] gap-3 border-b border-white/10 bg-black/30 px-4 py-3 text-xs font-semibold text-white/70">
+                    <div>ORDER</div>
+                    <div>ITEMS</div>
+                    <div>STATUS</div>
+                    <div className="text-right">TOTAL</div>
+                    <div className="text-right">ACTIONS</div>
+                  </div>
+                  <div className="divide-y divide-white/10 bg-black/20">
+                    {orders.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-sm text-white/60">
+                        No orders yet
+                      </div>
+                    ) : (
+                      orders.map((o) => (
+                        <div
+                          key={o._id}
+                          className="grid grid-cols-[0.9fr_1.2fr_0.7fr_0.7fr_0.6fr] gap-3 px-4 py-3"
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-sm font-semibold">
+                              #{String(o._id).slice(-8)}
+                            </span>
+                            <span className="text-xs text-white/60">
+                              {o.orderedOn
+                                ? new Date(o.orderedOn).toLocaleDateString()
+                                : o.createdAt
+                                  ? new Date(o.createdAt).toLocaleDateString()
+                                  : ""}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-sm text-white/80">
+                            <span className="line-clamp-2">{orderItemsLabel(o)}</span>
+                          </div>
+                          <div className="flex items-center text-sm text-white/80">
+                            {user?.isAdmin ? (
+                              <select
+                                value={o.status || "Pending"}
+                                onChange={(e) => handleUpdateOrderStatus(o._id, e.target.value)}
+                                disabled={updatingStatusId === o._id}
+                                className="w-full rounded-lg border border-white/10 bg-black/30 px-2 py-1 text-xs outline-none focus:border-white/20 disabled:opacity-60"
+                              >
+                                {orderStatuses.map((status) => (
+                                  <option key={status} value={status}>
+                                    {status}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              o.status || "Pending"
+                            )}
+                          </div>
+                          <div className="flex items-center justify-end text-sm font-semibold">
+                            {formatMoney(o.totalPrice)}
+                          </div>
+                          <div className="flex items-center justify-end">
+                            <button
+                              type="button"
+                              disabled={
+                                deletingOrderId === o._id ||
+                                String(o.status || "").toLowerCase() === "delivered"
+                              }
+                              onClick={() => handleDeleteOrder(o._id)}
+                              className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-200 hover:bg-red-500/15 disabled:opacity-60"
+                            >
+                              {deletingOrderId === o._id ? "Deleting..." : "Delete"}
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
