@@ -4,6 +4,7 @@ import Login from './pages/Login.jsx'
 import Home from './pages/Home.jsx'
 import Product from './pages/Product.jsx'
 import Story from './pages/Story.jsx'
+import About from './pages/About.jsx'
 import Cart from './pages/Cart.jsx'
 import ProductDetail from './pages/ProductDetail.jsx'
 import Profile from './pages/Profile.jsx'
@@ -26,6 +27,7 @@ function AppLayout() {
         <Route path="/product/detail/:id" element={<ProductDetail />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/story" element={<Story />} />
+        <Route path="/about" element={<About />} />
         <Route path="/admin" element={<AdminProduct />} />
       </Routes>
       {!hideFooter && <Footer />}
