@@ -1,9 +1,34 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
 import { useAuth } from "../context/useAuth.js";
-import { toAbsoluteUrl } from "../lib/api.js";
+import { api, toAbsoluteUrl } from "../lib/api.js";
 
 function UserNav() {
   const { user } = useAuth();
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      if (!user || user.isAdmin) {
+        setCartCount(0);
+        return;
+      }
+      try {
+        const response = await api.get("/carts/my");
+        const cart = response?.data?.data;
+        const items = Array.isArray(cart?.cartItems) ? cart.cartItems : [];
+        const count = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+        setCartCount(count);
+      } catch {
+        setCartCount(0);
+      }
+    };
+
+    fetchCartCount();
+    const interval = setInterval(fetchCartCount, 5000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   return (
     <nav className="px-9 relative  h-16 flex items-center justify-between px-4 overflow-hidden bg-black/90 backdrop-blur-md">
@@ -22,24 +47,36 @@ function UserNav() {
 
       <div className="flex items-center gap-3">
         {user ? (
-          <Link to="/profile" className="flex items-center gap-3">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-xs font-semibold uppercase text-neon">
-                {user.firstName || user.email}
-              </span>
-              <span className="text-[0.6rem] text-gray-500 uppercase text-neon opacity-70 tracking-widest">
-                Active Now
-              </span>
-            </div>
+          <>
+            {!user.isAdmin && (
+              <Link to="/cart" className="relative p-2 text-white hover:text-neon transition-colors">
+                <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-neon px-1 text-[10px] font-bold text-black">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
+              </Link>
+            )}
+            <Link to="/profile" className="flex items-center gap-3">
+              <div className="hidden sm:flex flex-col items-end">
+                <span className="text-xs font-semibold uppercase text-neon">
+                  {user.firstName || user.email}
+                </span>
+                <span className="text-[0.6rem] text-gray-500 uppercase text-neon opacity-70 tracking-widest">
+                  Active Now
+                </span>
+              </div>
 
-            <div className="size-10 border rounded-full overflow-hidden p-0.5 bg-white">
-              <img
-                src={user.image ? toAbsoluteUrl(user.image) : "/vite.svg"}
-                alt="profile"
-                className="size-full rounded-full object-cover"
-              />
-            </div>
-          </Link>
+              <div className="size-10 border rounded-full overflow-hidden p-0.5 bg-white">
+                <img
+                  src={user.image ? toAbsoluteUrl(user.image) : "/vite.svg"}
+                  alt="profile"
+                  className="size-full rounded-full object-cover"
+                />
+              </div>
+            </Link>
+          </>
         ) : (
           <Link
             to="/login"

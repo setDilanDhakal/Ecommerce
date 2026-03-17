@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { BookOpen, Info, LogOut, Menu, Shield, ShoppingBag, ShoppingCart, X } from "lucide-react"
 import { useAuth } from "../context/useAuth.js"
-import { toAbsoluteUrl } from "../lib/api.js"
+import { api, toAbsoluteUrl } from "../lib/api.js"
 
 function GlassButton({ children, to, onClick }) {
   const [hovered, setHovered] = useState(false)
@@ -60,7 +60,30 @@ function GlassButton({ children, to, onClick }) {
 
 export default function Navigation() {
   const [open, setOpen] = useState(false)
+  const [cartCount, setCartCount] = useState(0)
   const { user, logout } = useAuth()
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      if (!user || user.isAdmin) {
+        setCartCount(0)
+        return
+      }
+      try {
+        const response = await api.get("/carts/my")
+        const cart = response?.data?.data
+        const items = Array.isArray(cart?.cartItems) ? cart.cartItems : []
+        const count = items.reduce((sum, item) => sum + (item.quantity || 1), 0)
+        setCartCount(count)
+      } catch {
+        setCartCount(0)
+      }
+    }
+
+    fetchCartCount()
+    const interval = setInterval(fetchCartCount, 5000)
+    return () => clearInterval(interval)
+  }, [user])
 
   const menuItems = [
     { name: "Products", href: "/product" },
@@ -96,6 +119,11 @@ export default function Navigation() {
               className="relative inline-block pb-1 after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full"
             >
               {item.name.toUpperCase()}
+              {item.name === "Cart" && cartCount > 0 && (
+                <span className="absolute -right-3 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-neon px-1 text-[10px] font-bold text-black">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
             </Link>
           ))}
 
@@ -211,7 +239,14 @@ export default function Navigation() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 rounded-xl px-3 py-3 text-white/90 hover:bg-white/10 transition-colors"
                   >
-                    <Icon className="h-5 w-5 text-white/80" />
+                    <div className="relative">
+                      <Icon className="h-5 w-5 text-white/80" />
+                      {item.name === "Cart" && cartCount > 0 && (
+                        <span className="absolute -right-2 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-neon px-1 text-[10px] font-bold text-black">
+                          {cartCount > 99 ? "99+" : cartCount}
+                        </span>
+                      )}
+                    </div>
                     <span className="text-sm font-semibold tracking-wide">
                       {item.name.toUpperCase()}
                     </span>

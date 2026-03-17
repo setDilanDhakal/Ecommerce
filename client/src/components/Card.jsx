@@ -7,6 +7,99 @@ function formatMoney(value) {
   return Number.isFinite(num) ? `Rs${num.toFixed(2)}` : "Rs0.00";
 }
 
+function ProductCard({ product }) {
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setAdding(true);
+    try {
+      await api.post("/carts/items", {
+        productId: product._id,
+        quantity: 1,
+      });
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    } catch (err) {
+      console.error("Failed to add to cart:", err);
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  return (
+    <div className="group">
+      <Link
+        to={`/product/detail/${product._id}`}
+        className="block w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl"
+      >
+        <div className="relative h-44 w-full">
+          <img
+            src={product.image ? toAbsoluteUrl(product.image) : "/vite.svg"}
+            alt={product.name}
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+            Active
+          </div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 text-xs text-white/60">
+                <span>{formatMoney(product.price)}</span>
+                {product.season ? (
+                  <>
+                    <span>•</span>
+                    <span className="truncate">{product.season}</span>
+                  </>
+                ) : null}
+              </div>
+              <h3 className="mt-1 truncate text-lg font-semibold">{product.name}</h3>
+            </div>
+            <div className="shrink-0 text-xs font-semibold text-neon">View</div>
+          </div>
+
+          <div className="mt-3 max-h-0 overflow-hidden opacity-0 transition-all duration-300 group-hover:max-h-24 group-hover:opacity-100">
+            <p className="text-sm text-white/70 line-clamp-3">
+              {product.description}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {[product.genderType, product.season].filter(Boolean).map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70"
+                >
+                  {String(tag).toUpperCase()}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleAddToCart}
+            disabled={adding}
+            className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-semibold transition-colors ${
+              added
+                ? "border-emerald-500/30 bg-emerald-500/20 text-emerald-200"
+                : "border-white/10 bg-white/5 text-white hover:bg-white/10"
+            } disabled:opacity-60`}
+          >
+            {adding ? "Adding..." : added ? "Added!" : "Add to Cart"}
+          </button>
+        </div>
+      </Link>
+    </div>
+  );
+}
+
 function Card() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -77,70 +170,9 @@ function Card() {
           </div>
         ) : (
           products.slice(0, 5).map((product) => (
-            <Link
-              key={product._id}
-              to={`/product/detail/${product._id}`}
-              className="group reveal w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5 text-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl"
-            >
-              <div className="relative h-44 w-full">
-                <img
-                  src={product.image ? toAbsoluteUrl(product.image) : "/vite.svg"}
-                  alt={product.name}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-                <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
-                  Active
-                </div>
-              </div>
-
-              <div className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 text-xs text-white/60">
-                      <span>{formatMoney(product.price)}</span>
-                      {product.season ? (
-                        <>
-                          <span>•</span>
-                          <span className="truncate">{product.season}</span>
-                        </>
-                      ) : null}
-                    </div>
-                    <h3 className="mt-1 truncate text-lg font-semibold">{product.name}</h3>
-                  </div>
-                  <div className="shrink-0 text-xs font-semibold text-neon">View</div>
-                </div>
-
-                <div className="mt-3 max-h-0 overflow-hidden opacity-0 transition-all duration-300 group-hover:max-h-24 group-hover:opacity-100">
-                  <p className="text-sm text-white/70 line-clamp-3">
-                    {product.description}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {[product.genderType, product.season].filter(Boolean).map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70"
-                      >
-                        {String(tag).toUpperCase()}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </Link>
+            <div key={product._id} className="reveal">
+              <ProductCard product={product} />
+            </div>
           ))
         )}
       </div>
