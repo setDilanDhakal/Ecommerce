@@ -24,9 +24,39 @@ const normalizeOrigin = (value) => {
   return trimmed;
 };
 
-const allowedOrigins = (process.env.CORS_ORIGIN || "")
+const normalizeHost = (value) => {
+  const normalized = normalizeOrigin(value);
+  if (!normalized) return "";
+  if (normalized.startsWith("*.")) return normalized;
+  try {
+    if (normalized.startsWith("http://") || normalized.startsWith("https://")) {
+      return new URL(normalized).host;
+    }
+  } catch {
+    return "";
+  }
+  return normalized.replace(/^https?:\/\//, "").split("/")[0];
+};
+
+const allowedOriginList = (process.env.CORS_ORIGIN || "")
   .split(",")
   .map((s) => normalizeOrigin(s))
+  .filter(Boolean);
+
+const allowedOrigins = new Set(
+  allowedOriginList
+    .filter((o) => o.startsWith("http://") || o.startsWith("https://"))
+    .map((o) => normalizeOrigin(o))
+);
+const allowedHosts = new Set(
+  allowedOriginList
+    .filter((o) => !(o.startsWith("http://") || o.startsWith("https://")) && !o.startsWith("*."))
+    .map((o) => normalizeHost(o))
+    .filter(Boolean)
+);
+const allowedWildcards = allowedOriginList
+  .filter((o) => o.startsWith("*."))
+  .map((o) => o.slice(2))
   .filter(Boolean);
 
 app.use(
@@ -34,7 +64,20 @@ app.use(
     origin: (origin, callback) => {
       if (!origin) return callback(null, true); // allow server-to-server requests
       const normalizedOrigin = normalizeOrigin(origin);
-      if (allowedOrigins.includes(normalizedOrigin)) return callback(null, true);
+      if (allowedOrigins.size === 0 && allowedHosts.size === 0 && allowedWildcards.length === 0) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.has(normalizedOrigin)) return callback(null, true);
+      try {
+        const parsed = new URL(normalizedOrigin);
+        if (allowedHosts.has(parsed.host)) return callback(null, true);
+        if (allowedWildcards.some((suffix) => parsed.hostname === suffix || parsed.hostname.endsWith(`.${suffix}`))) {
+          return callback(null, true);
+        }
+      } catch {
+        if (allowedHosts.has(normalizedOrigin)) return callback(null, true);
+      }
       return callback(new Error(`CORS policy: origin ${origin} not allowed`));
     },
     credentials: true,
